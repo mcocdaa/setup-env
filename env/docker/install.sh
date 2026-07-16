@@ -1,8 +1,8 @@
 #!/bin/bash
 # Docker Engine installation
 # 1. Download the official install script
-# 2. Patch out silent/non-interactive flags so user can see & confirm
-# 3. Run the installer
+# 2. Patch out -qq and >/dev/null so we can see progress
+# 3. Run the installer (keeps -y / DEBIAN_FRONTEND — trusted official script)
 set -e
 source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
 
@@ -14,7 +14,7 @@ Download and install Docker Engine.
 
 Steps:
   1. Download get.docker.com install script (if not cached)
-  2. Patch silent/non-interactive flags to make install interactive
+  2. Patch -qq and >/dev/null to show install progress
   3. Run the installer with sudo
 
 Options:
@@ -40,32 +40,14 @@ if [ ! -f "$DOCKER_SCRIPT" ]; then
     curl -fsSL https://get.docker.com -o "$DOCKER_SCRIPT"
 fi
 
-# Patch: remove silent/non-interactive flags so user can see output and confirm
-log_info "Patching install script to be interactive (removing -y, -q, DEBIAN_FRONTEND, >/dev/null)..."
-
-# Remove DEBIAN_FRONTEND=noninteractive
-sed -i 's/DEBIAN_FRONTEND=noninteractive //g' "$DOCKER_SCRIPT"
-
-# Remove -y (assume-yes) flags — standalone and in flag lists
-sed -i 's/ -y / /g' "$DOCKER_SCRIPT"
-sed -i 's/ -y"/"/g' "$DOCKER_SCRIPT"
-
-# Remove -y -q from pkg_manager_flags variables (inside quotes)
-# Order matters: strip quoted patterns before generic -q/-y removal
-sed -i 's/"-y -q --best"/"--best"/g' "$DOCKER_SCRIPT"
-sed -i 's/"-y -q"/""/g' "$DOCKER_SCRIPT"
-
-# Remove -qq and -q (quiet) flags — must come AFTER quoted-var patches
+# Patch: only remove -qq quiet flags and >/dev/null so output is visible
+# Keep -y and DEBIAN_FRONTEND — it's the trusted official Docker installer
+log_info "Patching -qq and >/dev/null to show install progress..."
 sed -i 's/-qq//g' "$DOCKER_SCRIPT"
-sed -i 's/ -q / /g' "$DOCKER_SCRIPT"
-
-# Remove any remaining "-y --best" (leftover from "-y -q --best" after -q removal)
-sed -i 's/"-y --best"/"--best"/g' "$DOCKER_SCRIPT"
-
-# Remove >/dev/null output suppression (but keep 2>/dev/null)
 sed -i 's| >/dev/null||g' "$DOCKER_SCRIPT"
 
-log_info "Patched. Running Docker installer (interactive)..."
+# Run the installer
+log_info "Running Docker installer..."
 sudo sh "$DOCKER_SCRIPT" "$@"
 
 log_info "Docker installation complete."
