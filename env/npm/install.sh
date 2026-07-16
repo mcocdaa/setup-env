@@ -40,7 +40,7 @@ fi
 
 # Install Node.js and npm via apt
 sudo apt-get update
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs npm
+sudo apt-get install nodejs npm
 
 log_info "Node.js $(node --version 2>/dev/null || echo '?') installed."
 log_info "npm $(npm --version 2>/dev/null || echo '?') installed."
