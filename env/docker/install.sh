@@ -1,7 +1,7 @@
 #!/bin/bash
 # Docker Engine installation
 # 1. Download the official install script
-# 2. Patch out -qq quiet flags so we can see progress
+# 2. Patch out silent/non-interactive flags so user can see & confirm
 # 3. Run the installer
 set -e
 source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
@@ -14,7 +14,7 @@ Download and install Docker Engine.
 
 Steps:
   1. Download get.docker.com install script (if not cached)
-  2. Patch -qq flags to show install progress
+  2. Patch silent/non-interactive flags to make install interactive
   3. Run the installer with sudo
 
 Options:
@@ -40,12 +40,32 @@ if [ ! -f "$DOCKER_SCRIPT" ]; then
     curl -fsSL https://get.docker.com -o "$DOCKER_SCRIPT"
 fi
 
-# Patch: remove -qq flags so output is visible (not silent)
-log_info "Patching quiet flags (-qq) to show install progress..."
-sed -i 's/-qq//g' "$DOCKER_SCRIPT"
+# Patch: remove silent/non-interactive flags so user can see output and confirm
+log_info "Patching install script to be interactive (removing -y, -q, DEBIAN_FRONTEND, >/dev/null)..."
 
-# Run the installer
-log_info "Running Docker installer..."
+# Remove DEBIAN_FRONTEND=noninteractive
+sed -i 's/DEBIAN_FRONTEND=noninteractive //g' "$DOCKER_SCRIPT"
+
+# Remove -y (assume-yes) flags — standalone and in flag lists
+sed -i 's/ -y / /g' "$DOCKER_SCRIPT"
+sed -i 's/ -y"/"/g' "$DOCKER_SCRIPT"
+
+# Remove -y -q from pkg_manager_flags variables (inside quotes)
+# Order matters: strip quoted patterns before generic -q/-y removal
+sed -i 's/"-y -q --best"/"--best"/g' "$DOCKER_SCRIPT"
+sed -i 's/"-y -q"/""/g' "$DOCKER_SCRIPT"
+
+# Remove -qq and -q (quiet) flags — must come AFTER quoted-var patches
+sed -i 's/-qq//g' "$DOCKER_SCRIPT"
+sed -i 's/ -q / /g' "$DOCKER_SCRIPT"
+
+# Remove any remaining "-y --best" (leftover from "-y -q --best" after -q removal)
+sed -i 's/"-y --best"/"--best"/g' "$DOCKER_SCRIPT"
+
+# Remove >/dev/null output suppression (but keep 2>/dev/null)
+sed -i 's| >/dev/null||g' "$DOCKER_SCRIPT"
+
+log_info "Patched. Running Docker installer (interactive)..."
 sudo sh "$DOCKER_SCRIPT" "$@"
 
 log_info "Docker installation complete."
