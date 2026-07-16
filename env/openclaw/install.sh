@@ -3,6 +3,24 @@
 set -e
 source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
 
+show_help() {
+    cat <<EOF
+Usage: main.sh openclaw install
+
+Install openclaw globally via npm.
+
+Requires: npm (install first with: main.sh npm install)
+
+Options:
+  -h, --help    Show this help message
+EOF
+}
+
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
+    show_help
+    exit 0
+fi
+
 log_info "Installing openclaw..."
 
 # Ensure npm is available

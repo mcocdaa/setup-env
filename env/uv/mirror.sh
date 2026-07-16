@@ -1,8 +1,32 @@
 #!/bin/bash
 # Configure uv PyPI mirror
-# Sets UV_INDEX_URL and UV_DEFAULT_INDEX via environment or config
 set -e
 source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
+
+show_help() {
+    cat <<EOF
+Usage: main.sh uv mirror [url]
+
+Configure the PyPI index mirror for uv.
+
+Writes [pip] index-url to ~/.config/uv/uv.toml.
+Backs up existing uv.toml if present.
+
+Default mirror: https://pypi.tuna.tsinghua.edu.cn/simple
+
+Options:
+  -h, --help    Show this help message
+
+Examples:
+  main.sh uv mirror
+  main.sh uv mirror https://mirrors.aliyun.com/pypi/simple/
+EOF
+}
+
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
+    show_help
+    exit 0
+fi
 
 MIRROR_URL="${1:-https://pypi.tuna.tsinghua.edu.cn/simple}"
 UV_CONFIG="${UV_CONFIG_FILE:-$HOME/.config/uv/uv.toml}"

@@ -3,6 +3,31 @@
 set -e
 source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
 
+show_help() {
+    cat <<EOF
+Usage: main.sh docker mirror
+
+Configure Docker registry mirrors.
+
+Steps:
+  1. Ensure /etc/docker/ exists
+  2. Backup existing daemon.json (→ daemon.json.bac.N) if present
+  3. Copy env/docker/daemon.json to /etc/docker/daemon.json
+
+After running, restart Docker to apply:
+  sudo systemctl restart docker
+
+Options:
+  -h, --help    Show this help message
+EOF
+}
+
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
+    show_help
+    exit 0
+fi
+
+ENV_DIR="$(dirname "$(realpath "$0")")"
 DOCKER_ETC="/etc/docker"
 DAEMON_SRC="$ENV_DIR/daemon.json"
 DAEMON_DST="$DOCKER_ETC/daemon.json"

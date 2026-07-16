@@ -1,17 +1,40 @@
 #!/bin/bash
-# openclaw env — main entry point
+# openclaw env — npm global package
 set -e
 ENV_DIR="$(cd "$(dirname "$(realpath "$0")")" && pwd)"
+
+show_help() {
+    cat <<EOF
+Usage: main.sh openclaw <command>
+
+Commands:
+  install     Install openclaw globally via npm
+              Requires npm to be installed first (main.sh npm install).
+
+  -h, --help  Show this help message
+
+Examples:
+  main.sh openclaw install
+  main.sh openclaw install -h  (show install help)
+EOF
+}
+
 COMMAND="${1:-install}"
-shift 2>/dev/null || true
+
+if [ "$COMMAND" = "-h" ] || [ "$COMMAND" = "--help" ]; then
+    show_help
+    exit 0
+fi
+
+shift
 
 case "$COMMAND" in
     install)
         exec bash "$ENV_DIR/install.sh" "$@"
         ;;
     *)
-        echo "Usage: $0 {install}"
-        echo "  install   Install openclaw via npm"
+        echo "Unknown command: $COMMAND"
+        echo "Run 'main.sh openclaw -h' for usage."
         exit 1
         ;;
 esac
