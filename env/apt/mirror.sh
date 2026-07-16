@@ -12,9 +12,12 @@ Usage: main.sh apt mirror [mirror_url]
 
 Configure apt sources to use a mirror.
 
+Mirror URL is read from env/apt/mirror.conf (edit that file to change default).
+CLI argument overrides the config file.
+
 Default mirror: https://mirrors.tuna.tsinghua.edu.cn
 
-Supported mirrors:
+Common mirrors:
   https://mirrors.tuna.tsinghua.edu.cn   (Tsinghua - default)
   https://mirrors.aliyun.com             (Aliyun)
   https://mirrors.ustc.edu.cn            (USTC)
@@ -37,7 +40,20 @@ if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
     exit 0
 fi
 
-MIRROR_URL="${1:-https://mirrors.tuna.tsinghua.edu.cn}"
+ENV_DIR="$(dirname "$(realpath "$0")")"
+
+# Load mirror config from file (default)
+MIRROR_CONF="$ENV_DIR/mirror.conf"
+if [ -f "$MIRROR_CONF" ]; then
+    source "$MIRROR_CONF"
+fi
+
+# CLI argument overrides config file
+if [ -n "${1:-}" ]; then
+    MIRROR_URL="$1"
+fi
+
+MIRROR_URL="${MIRROR_URL:-https://mirrors.tuna.tsinghua.edu.cn}"
 # Strip trailing slash
 MIRROR_URL="${MIRROR_URL%/}"
 

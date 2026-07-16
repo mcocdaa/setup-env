@@ -9,6 +9,9 @@ Usage: main.sh uv mirror [url]
 
 Configure the PyPI index mirror for uv.
 
+Mirror URL is read from env/uv/mirror.conf (edit that file to change default).
+CLI argument overrides the config file.
+
 Writes [pip] index-url to ~/.config/uv/uv.toml.
 Backs up existing uv.toml if present.
 
@@ -28,7 +31,20 @@ if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
     exit 0
 fi
 
-MIRROR_URL="${1:-https://pypi.tuna.tsinghua.edu.cn/simple}"
+ENV_DIR="$(dirname "$(realpath "$0")")"
+
+# Load mirror config from file (default)
+MIRROR_CONF="$ENV_DIR/mirror.conf"
+if [ -f "$MIRROR_CONF" ]; then
+    source "$MIRROR_CONF"
+fi
+
+# CLI argument overrides config file
+if [ -n "${1:-}" ]; then
+    MIRROR_URL="$1"
+fi
+
+MIRROR_URL="${MIRROR_URL:-https://pypi.tuna.tsinghua.edu.cn/simple}"
 UV_CONFIG="${UV_CONFIG_FILE:-$HOME/.config/uv/uv.toml}"
 UV_CONFIG_DIR="$(dirname "$UV_CONFIG")"
 

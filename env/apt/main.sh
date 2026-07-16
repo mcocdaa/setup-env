@@ -10,7 +10,7 @@ Usage: main.sh apt <command> [args...]
 Commands:
   mirror      Configure apt sources mirror
               Backs up /etc/apt/sources.list, then replaces with mirror URLs.
-              Default: https://mirrors.tuna.tsinghua.edu.cn
+              Mirror URL read from env/apt/mirror.conf (edit to change).
 
   -h, --help  Show this help message
 
