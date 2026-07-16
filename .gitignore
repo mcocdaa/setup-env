@@ -1,0 +1,12 @@
+# Downloaded install scripts
+*.downloaded
+
+# Backup files
+*.bac
+*.bak
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
