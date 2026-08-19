@@ -21,6 +21,7 @@
 ./main.sh apt mirror         # apt 源镜像
 ./main.sh docker mirror      # Docker 镜像加速
 ./main.sh k3s mirror         # k3s containerd 镜像
+./main.sh kubeadm mirror     # kubeadm containerd 镜像（hosts.toml）
 ./main.sh uv mirror          # PyPI 镜像
 ./main.sh npm mirror         # npm registry 镜像
 ```
@@ -47,6 +48,16 @@ setup-env/
 │   │   ├── install.sh
 │   │   ├── mirror.sh
 │   │   └── registries.yaml  #   containerd 镜像配置
+│   ├── kubeadm/             # kubeadm Kubernetes（containerd）
+│   │   ├── main.sh
+│   │   ├── mirror.sh        #   写入 /etc/containerd/certs.d/<reg>/hosts.toml
+│   │   └── certs.d/         #   按 registry 分目录的 hosts.toml
+│   │       ├── docker.io/
+│   │       ├── registry-1.docker.io/
+│   │       ├── ghcr.io/
+│   │       ├── gcr.io/
+│   │       ├── quay.io/
+│   │       └── registry.k8s.io/
 │   ├── uv/                  # uv Python 包管理器
 │   │   ├── main.sh
 │   │   ├── install.sh

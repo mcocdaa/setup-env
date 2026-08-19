@@ -1,0 +1,7 @@
+# kubeadm containerd registry mirrors — registry.k8s.io
+# Copy to: /etc/containerd/certs.d/registry.k8s.io/hosts.toml
+# Restart containerd: sudo systemctl restart containerd
+server = "https://registry.k8s.io"
+
+[host."https://k8s.m.daocloud.io"]
+  capabilities = ["pull", "resolve"]

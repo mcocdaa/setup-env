@@ -1,0 +1,13 @@
+# kubeadm containerd registry mirrors — docker.io
+# Copy to: /etc/containerd/certs.d/docker.io/hosts.toml
+# Restart containerd: sudo systemctl restart containerd
+server = "https://docker.io"
+
+[host."https://docker.m.daocloud.io"]
+  capabilities = ["pull", "resolve"]
+[host."https://docker.1ms.run"]
+  capabilities = ["pull", "resolve"]
+[host."https://docker.xuanyuan.me"]
+  capabilities = ["pull", "resolve"]
+[host."https://hub.rat.dev"]
+  capabilities = ["pull", "resolve"]

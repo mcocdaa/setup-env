@@ -1,0 +1,7 @@
+# kubeadm containerd registry mirrors — gcr.io
+# Copy to: /etc/containerd/certs.d/gcr.io/hosts.toml
+# Restart containerd: sudo systemctl restart containerd
+server = "https://gcr.io"
+
+[host."https://gcr.m.daocloud.io"]
+  capabilities = ["pull", "resolve"]

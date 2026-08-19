@@ -1,0 +1,7 @@
+# kubeadm containerd registry mirrors — quay.io
+# Copy to: /etc/containerd/certs.d/quay.io/hosts.toml
+# Restart containerd: sudo systemctl restart containerd
+server = "https://quay.io"
+
+[host."https://quay.m.daocloud.io"]
+  capabilities = ["pull", "resolve"]
