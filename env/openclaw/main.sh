@@ -26,7 +26,7 @@ if [ "$COMMAND" = "-h" ] || [ "$COMMAND" = "--help" ]; then
     exit 0
 fi
 
-shift
+[[ $# -gt 0 ]] && shift
 
 case "$COMMAND" in
     install)

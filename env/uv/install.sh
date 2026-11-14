@@ -1,6 +1,7 @@
 #!/bin/bash
 # uv installation — fast Python package and project manager
 set -e
+# shellcheck source=/dev/null
 source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
 
 show_help() {

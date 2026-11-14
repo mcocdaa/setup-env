@@ -19,7 +19,7 @@ Commands:
 
 Examples:
   main.sh npm install
-  APT_MIRROR=https://mirrors.tuna.tsinghua.edu.cn/ubuntu main.sh npm install
+  APT_MIRROR=https://mirrors.tuna.tsinghua.edu.cn main.sh npm install
   main.sh npm mirror
   main.sh npm mirror https://registry.npmjs.org
   main.sh npm install -h       (show install help)
@@ -33,7 +33,7 @@ if [ "$COMMAND" = "-h" ] || [ "$COMMAND" = "--help" ]; then
     exit 0
 fi
 
-shift
+[[ $# -gt 0 ]] && shift
 
 case "$COMMAND" in
     install|mirror)

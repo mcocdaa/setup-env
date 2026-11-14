@@ -1,6 +1,7 @@
 #!/bin/bash
 # Configure uv PyPI mirror
 set -e
+# shellcheck source=/dev/null
 source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
 
 show_help() {
@@ -12,7 +13,7 @@ Configure the PyPI index mirror for uv.
 Mirror URL is read from env/uv/mirror.conf (edit that file to change default).
 CLI argument overrides the config file.
 
-Writes [pip] index-url to ~/.config/uv/uv.toml.
+Writes [[index]] configuration to ~/.config/uv/uv.toml.
 Backs up existing uv.toml if present.
 
 Default mirror: https://pypi.tuna.tsinghua.edu.cn/simple
@@ -36,6 +37,7 @@ ENV_DIR="$(dirname "$(realpath "$0")")"
 # Load mirror config from file (default)
 MIRROR_CONF="$ENV_DIR/mirror.conf"
 if [ -f "$MIRROR_CONF" ]; then
+    # shellcheck source=/dev/null
     source "$MIRROR_CONF"
 fi
 
@@ -59,10 +61,11 @@ if [ -f "$UV_CONFIG" ]; then
     cp "$UV_CONFIG" "${UV_CONFIG}.bac.${n}"
 fi
 
-# Write uv config with mirror
+# Write valid uv.toml [[index]] configuration
 cat > "$UV_CONFIG" <<EOF
-[pip]
-index-url = "$MIRROR_URL"
+[[index]]
+url = "${MIRROR_URL}"
+default = true
 EOF
 
 log_info "uv mirror configured at $UV_CONFIG"

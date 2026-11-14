@@ -1,7 +1,9 @@
 #!/bin/bash
 # npm / Node.js installation via apt
 set -e
-source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+# shellcheck source=/dev/null
+source "$ROOT_DIR/lib/common.sh"
 
 show_help() {
     cat <<EOF
@@ -17,7 +19,7 @@ Options:
 
 Examples:
   main.sh npm install
-  APT_MIRROR=https://mirrors.tuna.tsinghua.edu.cn/ubuntu main.sh npm install
+  APT_MIRROR=https://mirrors.tuna.tsinghua.edu.cn main.sh npm install
 EOF
 }
 
@@ -32,9 +34,9 @@ log_info "Installing Node.js and npm..."
 APT_MIRROR="${APT_MIRROR:-}"
 if [ -n "$APT_MIRROR" ]; then
     log_info "Using apt mirror: $APT_MIRROR"
-    MIRROR_SCRIPT="$ENV_DIR/mirror.sh"
-    if [ -f "$MIRROR_SCRIPT" ]; then
-        bash "$MIRROR_SCRIPT" "$APT_MIRROR"
+    APT_MIRROR_SCRIPT="$ROOT_DIR/env/apt/mirror.sh"
+    if [ -f "$APT_MIRROR_SCRIPT" ]; then
+        bash "$APT_MIRROR_SCRIPT" "$APT_MIRROR"
     fi
 fi
 

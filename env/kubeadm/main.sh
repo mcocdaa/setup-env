@@ -21,14 +21,14 @@ Examples:
 EOF
 }
 
-COMMAND="${1:-install}"
+COMMAND="${1:-mirror}"
 
 if [ "$COMMAND" = "-h" ] || [ "$COMMAND" = "--help" ]; then
     show_help
     exit 0
 fi
 
-shift
+[[ $# -gt 0 ]] && shift
 
 case "$COMMAND" in
     mirror)

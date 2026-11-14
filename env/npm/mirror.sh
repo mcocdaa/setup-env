@@ -1,6 +1,7 @@
 #!/bin/bash
 # Configure npm registry mirror
 set -e
+# shellcheck source=/dev/null
 source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
 
 show_help() {
@@ -33,6 +34,7 @@ ENV_DIR="$(dirname "$(realpath "$0")")"
 # Load mirror config from file (default)
 MIRROR_CONF="$ENV_DIR/mirror.conf"
 if [ -f "$MIRROR_CONF" ]; then
+    # shellcheck source=/dev/null
     source "$MIRROR_CONF"
 fi
 

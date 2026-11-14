@@ -1,5 +1,5 @@
 #!/bin/bash
-# npm-codex env — @anthropic-ai/codex
+# npm-codex env — @openai/codex
 set -e
 ENV_DIR="$(cd "$(dirname "$(realpath "$0")")" && pwd)"
 
@@ -8,7 +8,7 @@ show_help() {
 Usage: main.sh npm-codex <command>
 
 Commands:
-  install     Install @anthropic-ai/codex globally via npm
+  install     Install @openai/codex globally via npm
               Requires npm to be installed first (main.sh npm install).
 
   -h, --help  Show this help message
@@ -26,7 +26,7 @@ if [ "$COMMAND" = "-h" ] || [ "$COMMAND" = "--help" ]; then
     exit 0
 fi
 
-shift
+[[ $# -gt 0 ]] && shift
 
 case "$COMMAND" in
     install)

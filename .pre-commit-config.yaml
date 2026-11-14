@@ -1,20 +1,15 @@
 default_stages: [pre-commit]
 
 repos:
-  - repo: git@github.com:pre-commit/pre-commit-hooks.git
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
+      - id: check-executables-have-shebangs
       - id: check-merge-conflict
       - id: check-symlinks
       - id: check-yaml
-      - id: debug-statements
       - id: end-of-file-fixer
       - id: mixed-line-ending
-      - id: requirements-txt-fixer
       - id: trailing-whitespace
-  - repo: git@github.com:mcocdaa/ai-commit.git
-    rev: v1.0.2
-    hooks:
-      - id: ai-commit

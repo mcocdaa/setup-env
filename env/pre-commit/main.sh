@@ -9,7 +9,7 @@ Usage: main.sh pre-commit <command> [args...]
 
 Commands:
   install     Install pre-commit (git hook framework)
-              Uses pip to install. Falls back to pip3.
+              Prefers uv tool -> pipx -> apt-get -> pip fallback.
 
   -h, --help  Show this help message
 
@@ -26,7 +26,7 @@ if [ "$COMMAND" = "-h" ] || [ "$COMMAND" = "--help" ]; then
     exit 0
 fi
 
-shift
+[[ $# -gt 0 ]] && shift
 
 case "$COMMAND" in
     install)

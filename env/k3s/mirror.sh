@@ -1,7 +1,9 @@
 #!/bin/bash
 # Configure k3s containerd registry mirrors
 set -e
-source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
+ROOT_DIR="$(cd "$(dirname "$(realpath "$0")")/../.." && pwd)"
+# shellcheck source=/dev/null
+source "$ROOT_DIR/lib/common.sh"
 
 show_help() {
     cat <<EOF
@@ -41,8 +43,12 @@ if [ ! -d "$K3S_REG_DIR" ]; then
     sudo mkdir -p "$K3S_REG_DIR"
 fi
 
-# Backup then copy registries.yaml
-sudo bash -c "$(declare -f bac_cp); $(declare -f log_info); $(declare -f log_warn); $(declare -f log_error); bac_cp '$REG_SRC' '$REG_DST'"
+# Backup then copy registries.yaml using positional parameters
+sudo bash -c '
+    # shellcheck source=/dev/null
+    source "$1"
+    bac_cp "$2" "$3"
+' _ "$ROOT_DIR/lib/common.sh" "$REG_SRC" "$REG_DST"
 
 log_info "k3s registries.yaml written. Restart k3s to apply:"
 log_info "  sudo systemctl restart k3s         # server"

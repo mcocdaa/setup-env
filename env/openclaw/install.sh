@@ -1,6 +1,7 @@
 #!/bin/bash
 # openclaw installation via npm
 set -e
+# shellcheck source=/dev/null
 source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
 
 show_help() {

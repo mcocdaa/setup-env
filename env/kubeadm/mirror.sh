@@ -1,7 +1,9 @@
 #!/bin/bash
 # Configure kubeadm containerd registry mirrors via per-registry hosts.toml
 set -e
-source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
+ROOT_DIR="$(cd "$(dirname "$(realpath "$0")")/../.." && pwd)"
+# shellcheck source=/dev/null
+source "$ROOT_DIR/lib/common.sh"
 
 show_help() {
     cat <<EOF
@@ -63,8 +65,12 @@ for reg_dir in "$CERTS_SRC"/*/; do
         sudo mkdir -p "$dst_dir"
     fi
 
-    # Backup then copy (needs root for system paths)
-    sudo bash -c "$(declare -f bac_cp); $(declare -f log_info); $(declare -f log_warn); $(declare -f log_error); bac_cp '$src' '$dst_dir/hosts.toml'"
+    # Backup then copy (needs root for system paths) using positional parameters
+    sudo bash -c '
+        # shellcheck source=/dev/null
+        source "$1"
+        bac_cp "$2" "$3"
+    ' _ "$ROOT_DIR/lib/common.sh" "$src" "$dst_dir/hosts.toml"
 done
 
 if [ "$found" -eq 0 ]; then

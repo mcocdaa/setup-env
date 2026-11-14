@@ -1,6 +1,7 @@
 #!/bin/bash
 # @anthropic-ai/claude-code (Claude Code CLI) installation via npm
 set -e
+# shellcheck source=/dev/null
 source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
 
 show_help() {

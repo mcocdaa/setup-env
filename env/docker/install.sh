@@ -4,6 +4,7 @@
 # 2. Patch out -qq and >/dev/null so we can see progress
 # 3. Run the installer (keeps -y / DEBIAN_FRONTEND — trusted official script)
 set -e
+# shellcheck source=/dev/null
 source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
 
 show_help() {

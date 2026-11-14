@@ -1,8 +1,9 @@
 #!/bin/bash
-# pre-commit installation via pip
+# pre-commit installation (uv tool -> pipx -> apt-get -> pip fallback)
 # pre-commit is a framework for managing and maintaining
 # multi-language pre-commit hooks.
 set -e
+# shellcheck source=/dev/null
 source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
 
 show_help() {
@@ -11,7 +12,11 @@ Usage: main.sh pre-commit install
 
 Install pre-commit — a framework for managing git pre-commit hooks.
 
-Uses pip (or pip3) to install. Requires Python.
+Installation preference order:
+  1. uv tool install pre-commit
+  2. pipx install pre-commit
+  3. sudo apt-get install -y pre-commit
+  4. pip3/pip install --user --break-system-packages pre-commit
 
 After install, set up hooks in your repo:
   cd <your-repo>
@@ -31,22 +36,35 @@ fi
 
 log_info "Installing pre-commit..."
 
-# Find pip (try pip3 first since it's the explicit Python 3 version)
-PIP=""
-for p in pip3 pip; do
-    if command -v "$p" &>/dev/null; then
-        PIP="$p"
-        break
-    fi
-done
+if command -v uv &>/dev/null; then
+    log_info "Using: uv tool install pre-commit"
+    uv tool install pre-commit
+elif command -v pipx &>/dev/null; then
+    log_info "Using: pipx install pre-commit"
+    pipx install pre-commit
+elif command -v apt-get &>/dev/null; then
+    log_info "Using: apt-get install pre-commit"
+    sudo apt-get update
+    sudo apt-get install -y pre-commit
+else
+    PIP=""
+    for p in pip3 pip; do
+        if command -v "$p" &>/dev/null; then
+            PIP="$p"
+            break
+        fi
+    done
 
-if [ -z "$PIP" ]; then
-    log_error "pip not found. Install Python + pip first (or run './main.sh uv install')."
-    exit 1
+    if [ -z "$PIP" ]; then
+        log_error "No uv, pipx, apt-get, or pip found. Install uv first (or run './main.sh uv install')."
+        exit 1
+    fi
+
+    log_info "Using: $PIP"
+    if ! "$PIP" install --user --break-system-packages pre-commit; then
+        "$PIP" install --user pre-commit
+    fi
 fi
 
-log_info "Using: $PIP"
-$PIP install pre-commit
-
-log_info "pre-commit $(pre-commit --version 2>/dev/null) installed."
+log_info "pre-commit $(pre-commit --version 2>/dev/null || echo '(ensure ~/.local/bin is in PATH)') installed."
 log_info "Setup in a repo: cd <repo> && pre-commit install"

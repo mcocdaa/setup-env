@@ -48,3 +48,4 @@ env_dir() {
 
 # Root of the install project
 ROOT_DIR="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")/.." && pwd)"
+export ROOT_DIR

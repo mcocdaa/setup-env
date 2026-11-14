@@ -1,13 +1,14 @@
 #!/bin/bash
-# @anthropic-ai/codex (Claude Codex) installation via npm
+# @openai/codex (OpenAI Codex CLI) installation via npm
 set -e
+# shellcheck source=/dev/null
 source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
 
 show_help() {
     cat <<EOF
 Usage: main.sh npm-codex install
 
-Install @anthropic-ai/codex globally via npm.
+Install @openai/codex globally via npm.
 
 Requires: npm (install first with: main.sh npm install)
 
@@ -21,7 +22,7 @@ if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
     exit 0
 fi
 
-log_info "Installing @anthropic-ai/codex..."
+log_info "Installing @openai/codex..."
 
 # Ensure npm is available
 if ! command -v npm &>/dev/null; then
@@ -29,6 +30,6 @@ if ! command -v npm &>/dev/null; then
     exit 1
 fi
 
-npm install -g @anthropic-ai/codex
+npm install -g @openai/codex
 
-log_info "@anthropic-ai/codex installation complete."
+log_info "@openai/codex installation complete."

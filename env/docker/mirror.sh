@@ -1,7 +1,9 @@
 #!/bin/bash
 # Configure Docker registry mirrors via daemon.json
 set -e
-source "$(dirname "$(realpath "$0")")/../../lib/common.sh"
+ROOT_DIR="$(cd "$(dirname "$(realpath "$0")")/../.." && pwd)"
+# shellcheck source=/dev/null
+source "$ROOT_DIR/lib/common.sh"
 
 show_help() {
     cat <<EOF
@@ -40,8 +42,12 @@ if [ ! -d "$DOCKER_ETC" ]; then
     sudo mkdir -p "$DOCKER_ETC"
 fi
 
-# Backup then copy daemon.json
-sudo bash -c "$(declare -f bac_cp); $(declare -f log_info); $(declare -f log_warn); $(declare -f log_error); bac_cp '$DAEMON_SRC' '$DAEMON_DST'"
+# Backup then copy daemon.json using positional parameters
+sudo bash -c '
+    # shellcheck source=/dev/null
+    source "$1"
+    bac_cp "$2" "$3"
+' _ "$ROOT_DIR/lib/common.sh" "$DAEMON_SRC" "$DAEMON_DST"
 
 log_info "Docker daemon.json written. Restart docker to apply:"
 log_info "  sudo systemctl restart docker"

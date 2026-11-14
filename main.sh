@@ -11,6 +11,7 @@
 #   ./main.sh docker install           # Install Docker
 #   ./main.sh docker mirror            # Configure Docker mirror
 #   ./main.sh docker -h                # Show docker env help
+#   ./main.sh apt mirror               # Configure apt mirror
 #   ./main.sh uv install               # Install uv
 #   ./main.sh npm mirror               # Configure npm mirror
 # =============================================================================
@@ -33,6 +34,7 @@ Options:
 
 Examples:
   $0                        List all environments
+  $0 apt mirror             Configure apt mirror
   $0 docker install         Install Docker Engine
   $0 docker mirror          Configure Docker registry mirrors
   $0 docker -h              Show docker sub-commands
@@ -52,11 +54,6 @@ if [ "$ENV_NAME" = "-h" ] || [ "$ENV_NAME" = "--help" ]; then
     show_help
     exit 0
 fi
-
-COMMAND="${2:-install}"
-
-# Shift away env name and command so env/main.sh sees only [args...]
-shift 2 2>/dev/null || true
 
 if [ -z "$ENV_NAME" ]; then
     echo "Usage: $0 <env> [command] [args...]"
@@ -78,12 +75,20 @@ if [ -z "$ENV_NAME" ]; then
             cmds+=("$fname")
         done
         if [ ${#cmds[@]} -gt 0 ]; then
-            printf " (%s)" "$(IFS=', '; echo "${cmds[*]}")"
+            cmd_list="$(IFS=','; echo "${cmds[*]}")"
+            printf " (%s)" "${cmd_list//,/, }"
         fi
         echo
     done
     exit 0
 fi
+
+if [[ "$ENV_NAME" == *"/"* || "$ENV_NAME" == "." || "$ENV_NAME" == ".." ]]; then
+    echo "ERROR: Invalid environment name '$ENV_NAME'"
+    exit 1
+fi
+
+shift
 
 ENV_MAIN="$ROOT_DIR/env/$ENV_NAME/main.sh"
 
@@ -99,5 +104,5 @@ if [ ! -f "$ENV_MAIN" ]; then
     exit 1
 fi
 
-# Route to the env's main.sh
-exec bash "$ENV_MAIN" "$COMMAND" "$@"
+# Route to the env's main.sh without forcing a default subcommand
+exec bash "$ENV_MAIN" "$@"
